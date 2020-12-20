@@ -1,55 +1,42 @@
-import { Component } from 'react';
-
 import Searchbar from './components/Searchbar/Searchbar';
 import ImageGallery from './components/ImageGallery/ImageGallery';
 import Container from './components/Container/Container';
 import Modal from './components/Modal';
+import { useState } from 'react';
 
-class App extends Component {
-  state = {
-    query: '',
-    showModal: false,
-    bigImage: null,
-    alt: null,
+const App = () => {
+  const [query, setQuery] = useState('')
+  const [showModal, setShowModal] = useState(false)
+  const [bigImage, setBigImage] = useState(null)
+  const [alt, setAlt] = useState(null)
+
+  const onSubmitHandler = newQuery => {
+    setQuery(newQuery)
   };
 
-  onSubmitHandler = query => {
-    this.setState({
-      query,
-    });
+  const getContentForModal = (newBigImage, newAlt) => {
+    setBigImage(newBigImage)
+    setAlt(newAlt)
+    setShowModal(true)
   };
 
-  getContentForModal = (bigImage, alt) => {
-    this.setState({
-      bigImage,
-      alt,
-      showModal: true,
-    });
+  const toggleModal = () => {
+    setShowModal(prev => !prev)
   };
 
-  toggleModal = () => {
-    this.setState(prevState => ({
-      showModal: !prevState.showModal,
-    }));
-  };
+  return (
+    <Container>
+      <Searchbar onSubmitHandler={onSubmitHandler} />
+      <ImageGallery
+        query={query}
+        getContentForModal={getContentForModal}
+      />
+      {showModal && (
+        <Modal src={bigImage} alt={alt} onClose={toggleModal} />
+      )}
+    </Container>
+  );
 
-  render() {
-    const { query, showModal, bigImage, alt } = this.state;
-    return (
-      <Container>
-        <Searchbar onSubmitHandler={this.onSubmitHandler} />
-        <ImageGallery
-          query={query}
-          getContentForModal={this.getContentForModal}
-        />
-        {showModal && (
-          <Modal src={bigImage} alt={alt} onClose={this.toggleModal} />
-        )}
-      </Container>
-    );
-  }
 }
 
 export default App;
-
-//https://github.com/goitacademy/react-homework/tree/master/homework-03/image-finder
